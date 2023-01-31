@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CartResource;
-use App\Http\Resources\ProductResource;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -13,7 +11,6 @@ class CartController extends Controller
 {
     public function listItems(Product $product)
     {
-//        return Cart::query()->where('user_id', auth()->id())->with('products')->get();
         return Product::query()->with('cart')->has('cart')->get();
     }
 
@@ -44,7 +41,6 @@ class CartController extends Controller
 
     public function removeFromCart(Product $product)
     {
-
         Cart::query()->where('product_id', $product->id)->delete();
 
         $product->query()->where('id', $product->id)->update([
@@ -59,7 +55,6 @@ class CartController extends Controller
 
     public function emptyCart()
     {
-
         Cart::query()->where('user_id', auth()->id())->delete();
 
         return response()->json([
@@ -85,5 +80,10 @@ class CartController extends Controller
         $order->update(['total' => $price]);
 
         Cart::query()->where('user_id', auth()->id())->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => "Order created successfully"
+        ]);
     }
 }
