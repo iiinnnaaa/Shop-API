@@ -30,8 +30,8 @@ class CartController extends Controller
             ]);
 
             return response()->json([
-               'status' => true,
-               'message' => "$product->name added to your cart successfully."
+                'status' => true,
+                'message' => "$product->name added to your cart successfully."
             ]);
 
         } catch (\Exception $e) {
@@ -42,7 +42,8 @@ class CartController extends Controller
         }
     }
 
-    public function removeFromCart(Product $product){
+    public function removeFromCart(Product $product)
+    {
 
         Cart::query()->where('product_id', $product->id)->delete();
 
@@ -56,21 +57,23 @@ class CartController extends Controller
         ]);
     }
 
-    public function emptyCart(){
+    public function emptyCart()
+    {
 
         Cart::query()->where('user_id', auth()->id())->delete();
 
         return response()->json([
-           'status' => true,
-           'message' => "All items are removed from your cart successfully."
+            'status' => true,
+            'message' => "All items are removed from your cart successfully."
         ]);
     }
 
-    public function purchaseItems(){
+    public function purchaseItems()
+    {
         $products = Product::query()->with('cart')->has('cart')->get()->all();
 
         $order = Order::query()->create([
-            'user_id'=> auth()->id(),
+            'user_id' => auth()->id(),
         ]);
 
         $price = 0;
@@ -79,10 +82,7 @@ class CartController extends Controller
             $price += $product->price;
         }
 
-        Order::query()->where('id')
-            ->update([
-            'total'=> $price
-        ]);
+        $order->update(['total' => $price]);
 
         Cart::query()->where('user_id', auth()->id())->delete();
     }
