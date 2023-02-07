@@ -9,11 +9,16 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-
-    public function show()
+    public function show(User $id)
     {
-        return UserResource::collection(User::with(['roles'])->get());
-//        return new UserResource($id);
+        if ($id->id == auth()->id()) {
+            return new UserResource($id);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => "Authorization error"
+            ]);
+        }
     }
 
     public function update(UserUpdateRequest $request)

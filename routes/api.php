@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\VerificationController;
 use App\Http\Controllers\Api\Product\CartController;
 use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Api\Product\StripePaymentController;
 use App\Http\Controllers\Api\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,33 +23,33 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('verification/resend', [VerificationController::class, 'resend'])->name('resend');
 
     Route::prefix('user')->group(function () {
-        Route::get('/', [UserController::class, 'show'])->name('account');
-        Route::put('update', [UserController::class, 'update'])->name('update');
-        Route::delete('delete', [UserController::class, 'delete'])->name('delete');
+        Route::get('{id}', [UserController::class, 'show'])->name('account');
+        Route::put('{id}/update', [UserController::class, 'update'])->name('update');
+        Route::delete('{id}/delete', [UserController::class, 'delete'])->name('delete');
 
-        Route::get('cart', [CartController::class, 'listItems']);
-        Route::delete('cart/empty', [CartController::class, 'emptyCart']);
-        Route::get('cart/purchase', [CartController::class, 'purchaseItems']);
+        Route::get('{id}/cart', [CartController::class, 'listItems']);
+        Route::delete('{id}/cart/empty', [CartController::class, 'emptyCart']);
+        Route::get('{id}/cart/purchase', [CartController::class, 'purchaseItems']);
     });
 
     Route::prefix('products')->group(function () {
-        Route::post('/', [ProductController::class, 'store']);
-        Route::get('{product}',[ProductController::class, 'show']);
         Route::put('{product}',[ProductController::class, 'update']);
         Route::delete('{product}',[ProductController::class, 'destroy']);
-
         Route::get('{product}/add',[CartController::class, 'addToCart']);
         Route::delete('{product}/remove',[CartController::class, 'removeFromCart']);
     });
 
-//    Route::get('cart/{product}', [CartController::class, 'listItems']);
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::post('stripe',[StripePaymentController::class, 'stripePost'])->name('stripe.post');
 });
 
 Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
-
 Route::post('verification/{code}', [VerificationController::class, 'verify'])->name('verification');
 
-Route::get('products', [ProductController::class, 'index']);
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::get('{product}', [ProductController::class, 'show']);
+});
 

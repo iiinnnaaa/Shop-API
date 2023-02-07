@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 
 class CartController extends Controller
 {
-    public function listItems(Product $product)
+    public function listItems(Product $product, User $id)
     {
         return Product::query()->with('cart')->has('cart')->get();
     }
