@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
@@ -28,16 +27,10 @@ class CartController extends Controller
                 'cart_id' => $cart->id,
             ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => "$product->name added to your cart successfully."
-            ]);
+            return $this->responseBody(message: "$product->name added to your cart successfully.");
 
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->responseBody(false, $e->getMessage(), 500);
         }
     }
 
@@ -49,20 +42,14 @@ class CartController extends Controller
             'cart_id' => null,
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => "$product->name successfully removed from your cart."
-        ]);
+        return $this->responseBody(message: "$product->name successfully removed from your cart.");
     }
 
     public function emptyCart()
     {
         Cart::query()->where('user_id', auth()->id())->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => "All items are removed from your cart successfully."
-        ]);
+        return $this->responseBody(message: "All items are removed from your cart successfully.");
     }
 
     public function purchaseItems()
@@ -83,9 +70,6 @@ class CartController extends Controller
 
         Cart::query()->where('user_id', auth()->id())->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => "Order created successfully"
-        ]);
+        return $this->responseBody(message: "Order created successfully");
     }
 }

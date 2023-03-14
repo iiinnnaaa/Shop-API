@@ -10,6 +10,7 @@ use App\Models\Token;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use PHPUnit\Exception;
 
 class AuthController extends Controller
 {
@@ -37,37 +38,31 @@ class AuthController extends Controller
 
             $user->roles()->attach(1);
 
-            dd($user);
 //            $user->roles()->attach([1,3]);
 
-            Mail::to('isoyan.inna@gmail.com')->send(new ConfirmationMail($data));
+//            Mail::to('isoyan.inna@gmail.com')->send(new ConfirmationMail($data));
 
             auth()->guard()->login($user);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'User Created Successfully, please check and confirm your email',
-            ], 201);
+            return $this->responseBody(message: 'User Created Successfully', body: ['user_id'=>$user->id]);
 
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+        } catch (\Exception $exception) {
+            return $this->responseBody(false, $exception->getMessage(), 422);
         }
     }
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        try {
+            $credentials = $request->only('email', 'password');
 
-        if (auth()->attempt($credentials)) {
-            return response()->json([
-               'status' => true,
-                'message' => 'Logged in successfully',
-                'token' => auth()->user()->createToken("API TOKEN")->plainTextToken], 200
-            );
+            if (auth()->attempt($credentials)) {
+                $token = auth()->user()->createToken("API TOKEN")->plainTextToken;
+                return $this->responseBody(message: "Logged in successfully", body: ['token' => $token]);
+            }
+            return $this->responseBody(false, "Wrong email or password", 422);
+        } catch (Exception$exception) {
+            return $this->responseBody(false, $exception->getMessage(), 422);
         }
     }
 
@@ -75,9 +70,6 @@ class AuthController extends Controller
     {
         auth()->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'User Logged Out Successfully',
-        ], 201);
+        return $this->responseBody(message: 'Logged out successfully');
     }
 }

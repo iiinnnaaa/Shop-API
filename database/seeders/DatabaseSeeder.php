@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +22,12 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+//        DB::table('users')->insert([
+//            'first_name' => 'Test',
+//            'last_name'=>'Testikyan',
+//            'email'=>'testikyantest03@gmail.com',
+//            'password'=>123456
+//        ]);
 //        $this->call(RoleSeeder::class);
 //        $this->call(CategorySeeder::class);
     }

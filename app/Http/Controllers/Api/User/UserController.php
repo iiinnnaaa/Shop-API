@@ -14,10 +14,7 @@ class UserController extends Controller
         if ($id->id == auth()->id()) {
             return new UserResource($id);
         } else {
-            return response()->json([
-                'status' => false,
-                'message' => "Authorization error"
-            ]);
+            return $this->responseBody(false, "Authorization error", 500);
         }
     }
 
@@ -38,16 +35,10 @@ class UserController extends Controller
                 'image' => $filePath,
             ]);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'User Updated Successfully',
-            ], 201);
+            return $this->responseBody(message: 'User Updated Successfully.');
 
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 201);
+            return $this->responseBody(false, $e->getMessage(), 500);
         }
     }
 
@@ -57,6 +48,5 @@ class UserController extends Controller
 
         return response(null, 204);
     }
-
 
 }
