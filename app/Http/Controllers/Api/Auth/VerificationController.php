@@ -15,10 +15,7 @@ class VerificationController extends Controller
         $token = Token::query()->where('token', $code)->get()->first();
 
         if (!$token) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Token not found',
-            ], 500);
+            return $this->responseBody(false, 'Token not found', 500);
         }
 
         $token_exp = $token->expiry_date;
@@ -29,19 +26,12 @@ class VerificationController extends Controller
 
             $token->delete();
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Your email is verified',
-            ], 201);
+            return $this->responseBody(message: 'Your email is verified');
 
 
         } elseif ($token_exp < now()) {
             $token->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Token is expired, resend',
-            ], 201);
-
+            return $this->responseBody(false, 'Token is expired, please try to resend', 422);
         }
     }
 
@@ -62,16 +52,10 @@ class VerificationController extends Controller
 
             Mail::to('isoyan.inna@gmail.com')->send(new ConfirmationMail($data));
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Verification token is sent to your email',
-            ], 201);
+            return $this->responseBody(message: 'Verification token is sent to your email');
 
         } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Your email is already verified',
-            ]);
+            return $this->responseBody(false, 'Your email is already verified', 422);
         }
     }
 }

@@ -26,10 +26,7 @@ class StripePaymentController extends Controller
             'description' => 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
         ]);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Charged successfully.',
-        ]);
+        return $this->responseBody(message: "Charged successfully");
     }
 }
 
