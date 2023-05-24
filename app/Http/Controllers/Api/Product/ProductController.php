@@ -25,6 +25,12 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
+    public function create(Request $request)
+    {
+        Product::query()->create([
+           'name'=>$request->input('name'),
+        ]);
+    }
 
     public function update(Request $request, Product $product)
     {
