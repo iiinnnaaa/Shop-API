@@ -45,8 +45,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::post('verification', [VerificationController::class, 'verify'])->name('verification');
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('verification/{code}', [VerificationController::class, 'verify'])->name('verification');
 
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);

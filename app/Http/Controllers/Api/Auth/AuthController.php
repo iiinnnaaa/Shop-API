@@ -56,7 +56,12 @@ class AuthController extends Controller
         try {
             $credentials = $request->only('email', 'password');
 
+            $user = User::query()->where('email', $request->input('email'))->first();
+
             if (auth()->attempt($credentials)) {
+                if(!$user->is_verified){
+                    return $this->responseBody(false,"Your account is not verified", 422);
+                }
                 $token = auth()->user()->createToken("API TOKEN")->plainTextToken;
                 return $this->responseBody(message: "Logged in successfully", body: ['token' => $token]);
             }

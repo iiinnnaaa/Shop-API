@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Mails\ConfirmationMail;
 use App\Models\Token;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class VerificationController extends Controller
 {
-    public function verify($code)
+    public function verify(Request $request)
     {
-        $token = Token::query()->where('token', $code)->get()->first();
+        $token = Token::query()->where('token', $request->input('code'))->get()->first();
 
         if (!$token) {
             return $this->responseBody(false, 'Token not found', 500);
